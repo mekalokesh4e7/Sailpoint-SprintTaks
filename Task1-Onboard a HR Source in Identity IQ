@@ -1,0 +1,77 @@
+//BuildMap Rule:
+import sailpoint.connector.DelimitedFileConnector;
+import sailpoint.tools.Util;
+import org.apache.log4j.Logger;
+
+
+Logger logger = Logger.getLogger("willwing.RulesDebugLogger");
+logger.info("BuildMapRule For the task");
+
+
+Map map= DelimitedFileConnector.defaultBuildMap(cols,record); //to get the dekimitedFile as a defaukt file and link to map object to iterate each account
+
+
+String firstName = (String) map.get("FIRST_NAME");
+
+String lastName = (String) map.get("LAST_NAME");
+
+String empoID= (String) map.get("EMPLOYEE_ID");
+
+
+if(firstName!=null&&lastName!=null){
+    char ch=firstName.charAt(0);
+    String USER_NAME=ch+firstName;
+    map.put("USER_NAME",USER_NAME);   
+}
+
+
+return map;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Creation Rule
+import org.apache.log4j.Logger;
+import sailpoint.object.Identity;
+import java.util.*;
+
+Logger logger = Logger.getLogger("willwing.RulesDebugLogger");
+logger.info("BuildMapRule For the task");
+
+//Getting all the attributes which are needed for unique Name and email generation
+String UserName= account.getStringAttribute("USER_NAME");
+String FirstName= account.getStringAttribute("FIRST_NAME");
+String LastName= account.getStringAttribute("LAST_NAME");
+String Email=FirstName+"."+LastName+"@willwing.com";
+UniqueNum(){
+    
+    Identity id = context.getObjectByName(Identity.class,UserName); //It is used to check weather the userName is present as identity or not and retrun boolean value
+
+if(id==null){
+    logger.info("Inside the Id == null");
+    //Thses lines of code is used to set the values in the resource object of identity iq
+    logger.info(Email);
+    identity.setDisplayName(UserName);
+    identity.setName(UserName);
+    identity.setEmail(Email);
+}else{
+    char lastDigit=UserName.charAt(UserName.length()-1);//used to fetch the last character of the UserName to know weather it contains a Inte
+    logger.info(lastDigit+"     "+UserName);
+    if(Character.isDigit(lastDigit)){
+        logger.info("Inside the unique digit contains null");
+        int digit = Character.getNumericValue(lastDigit);
+        digit = (digit + 1) % 10; //this condition is used to count the double digit also
+        lastDigit = (char) (digit + '0');
+        UserName=UserName.substring(0,UserName.length()-1);
+        UserName=UserName+lastDigit;
+        Email=FirstName+"."+LastName+lastDigit+"@willwing.com";
+        UniqueNum();//at last the function is invoked to change the values
+    }
+    else{
+        logger.info("Inside the unique digit creation null");
+        UserName=UserName+"2";
+        Email=FirstName+"."+LastName+"2@willwing.com";
+        UniqueNum();
+    }
+}
+}
+UniqueNum();
