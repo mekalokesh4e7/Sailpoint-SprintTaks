@@ -1,28 +1,14 @@
-import sailpoint.connector.DelimitedFileConnector;
+////Identity mapping rule to change the Employee ID without aggrigating 
 import sailpoint.tools.Util;
 import org.apache.log4j.Logger;
 import java.util.*;
 
-Logger logger = Logger.getLogger("willwing.RulesDebugLogger");
+Logger logger = Logger.getLogger("ADdemo.RulesDebugLogger");
 logger.info("BuildMapRule For the task");
 
-
-Map map= DelimitedFileConnector.defaultBuildMap(cols,record); //to get the dekimitedFile as a defaukt file and link to map object to iterate each account
-
-
-String firstName = (String) map.get("FIRST_NAME");
-
-String lastName = (String) map.get("LAST_NAME");
-
-String empIDString= (String) map.get("EMPLOYEE_ID");
+String empIDString= link.getAttribute("EMPLOYEE_ID");
 String orgoID="0424WW";
 int numberLenth=4;
-
-if(firstName!=null&&lastName!=null){
-    char ch=firstName.charAt(0);
-    String USER_NAME=ch+firstName;
-    map.put("USER_NAME",USER_NAME);   
-}
 
 if(empIDString.length()>4){
     numberLenth=empIDString.length();
@@ -34,12 +20,7 @@ int empID = integerObject.intValue();
 //int empID = Integer.parseInt(empIDString);
 String ModifyempID=orgoID+String.format("%0"+numberLenth+"d",empID);
 logger.info(ModifyempID);
-map.put("EMPLOYEE_ID",ModifyempID);
-
-return map;
-
-
-
+retrun ModifyempID;
 
 
 
@@ -65,7 +46,7 @@ String empoID= (String) map.get("EMPLOYEE_ID");
 
 if(firstName!=null&&lastName!=null){
     char ch=firstName.charAt(0);
-    String USER_NAME=ch+firstName;
+    String USER_NAME=ch+lastName;
     map.put("USER_NAME",USER_NAME);   
 }
 
